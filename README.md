@@ -6,4 +6,4 @@ everything else is 100% original and what I slaved over for the past 2 weeks, LE
 ✅ making it so it detects game changes, maybe by checking placeids and seeing if they match? or a more improved approach?<br />
 ⬜ making it able to detect when there is no game, and causing a message to be spit out (with expletives cause we cool like that)<br />
 ⬜ making it launch with roblox and grab the data during startup<br />
-⬜ making code not violate DRY, as stated in recent commit, working on this atm actually
+✅ making code not violate DRY, as stated in recent commit, working on this atm actually
