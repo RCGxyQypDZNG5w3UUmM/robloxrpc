@@ -11,19 +11,25 @@ debugtoggle = True
 client_id = '1032007391677521960'
 rpc_obj = rpc.DiscordIpcClient.for_platform(client_id)
 
-cmd = "wmic process where name='robloxplayerbeta.exe' get /format:csv"
-res = sp.check_output(cmd)
-pattern = 'placeId=[0-9]+'
-match = re.search(pattern, str(res))
-global placeId, apiResp, thumbResp, placeName, placeThumb, placeBuilder
-placeId = match.group().split('=')[1]
 
-apiResp = req.get(f'https://www.roblox.com/places/api-get-details?assetId={placeId}').json()
-thumbResp = req.get(f'https://thumbnails.roblox.com/v1/places/gameicons?placeIds={placeId}&size=150x150&format=Png').json()
+def updateData():
+	global start_time
+	start_time = mktime(time.localtime())
+	cmd = "wmic process where name='robloxplayerbeta.exe' get /format:csv"
+	res = sp.check_output(cmd)
+	pattern = 'placeId=[0-9]+'
+	match = re.search(pattern, str(res))
+	global placeId, apiResp, thumbResp, placeName, placeThumb, placeBuilder
+	placeId = match.group().split('=')[1]
 
-placeName = apiResp.get('Name')
-placeThumb = thumbResp['data'][0].get('imageUrl') + ".png"
-placeBuilder = apiResp.get('Builder')
+	apiResp = req.get(f'https://www.roblox.com/places/api-get-details?assetId={placeId}').json()
+	thumbResp = req.get(f'https://thumbnails.roblox.com/v1/places/gameicons?placeIds={placeId}&size=150x150&format=Png').json()
+
+	placeName = apiResp.get('Name')
+	placeThumb = thumbResp['data'][0].get('imageUrl') + ".png"
+	placeBuilder = apiResp.get('Builder')
+
+updateData()
 
 if debugtoggle == True:
     out.debug(f"First Run PlaceID: {placeId}")
@@ -31,7 +37,6 @@ if debugtoggle == True:
     out.debug(f"First Run Place Thumbnail: {placeThumb}")
     out.debug(f"First Run Place Builder: {placeBuilder}")
 
-start_time = mktime(time.localtime())
 while True:
     cmd = "wmic process where name='robloxplayerbeta.exe' get /format:csv"
     res = sp.check_output(cmd)
@@ -41,12 +46,7 @@ while True:
 
     if tempstore_placeId != placeId:
         placeId = tempstore_placeId
-        out.debug(f"{tempstore_placeId}, {placeId}")
-        apiResp = req.get(f'https://www.roblox.com/places/api-get-details?assetId={placeId}').json()
-        thumbResp = req.get(f'https://thumbnails.roblox.com/v1/places/gameicons?placeIds={placeId}&size=150x150&format=Png').json()
-        placeName = apiResp.get('Name')
-        placeThumb = thumbResp['data'][0].get('imageUrl') + ".png"
-        placeBuilder = apiResp.get('Builder')
+        updateData()
         if debugtoggle == True:
                 out.debug(f"Updated PlaceID: {placeId}")
                 out.debug(f"Updated Place Name: {placeName}")
